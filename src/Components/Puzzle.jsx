@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { toast, ToastContainer } from "react-toastify";
@@ -13,9 +12,10 @@ function Puzzle() {
     height: window.innerHeight,
   });
 
-  const image = "https://i.postimg.cc/FRSJjXty/487162888-3678033235821287-3736972782378386626-n.jpg";
+  const image =
+    "https://i.postimg.cc/FRSJjXty/487162888-3678033235821287-3736972782378386626-n.jpg";
 
-  // Responsive confetti sizing
+  // Responsive confetti
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -24,17 +24,46 @@ function Puzzle() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Reset when grid size changes
   useEffect(() => {
     resetPuzzle();
   }, [size]);
 
+  // ✅ Generate solvable shuffle
   const resetPuzzle = () => {
     const arr = Array.from({ length: size * size }, (_, i) => i);
-    const shuffled = arr.sort(() => Math.random() - 0.5);
+    let shuffled;
+    do {
+      shuffled = [...arr].sort(() => Math.random() - 0.5);
+    } while (!isSolvable(shuffled));
     setTiles(shuffled);
     setIsWin(false);
   };
+
+  // ✅ Check solvability
+  function isSolvable(puzzle) {
+    const len = puzzle.length;
+    const n = Math.sqrt(len);
+    const emptyIndex = puzzle.indexOf(len - 1);
+    const rowFromBottom = n - Math.floor(emptyIndex / n);
+
+    // count inversions
+    const inversions = puzzle.reduce((count, curr, i) => {
+      if (curr === len - 1) return count;
+      for (let j = i + 1; j < len; j++) {
+        if (puzzle[j] !== len - 1 && puzzle[i] > puzzle[j]) count++;
+      }
+      return count;
+    }, 0);
+
+    if (n % 2 !== 0) {
+      return inversions % 2 === 0;
+    } else {
+      return (
+        (rowFromBottom % 2 === 0 && inversions % 2 === 1) ||
+        (rowFromBottom % 2 === 1 && inversions % 2 === 0)
+      );
+    }
+  }
 
   const handleClick = (index) => {
     const emptyIndex = tiles.indexOf(size * size - 1);
@@ -65,17 +94,16 @@ function Puzzle() {
     }
   };
 
-  // Dynamic tile size based on screen width
   const containerSize = Math.min(window.innerWidth * 0.9, 400);
   const tileSize = containerSize / size;
 
   return (
     <div className="flex flex-col items-center mt-2 px-2 select-none">
-     
+      {isWin && (
+        <Confetti width={windowSize.width} height={windowSize.height} />
+      )}
 
-      {isWin && <Confetti width={windowSize.width} height={windowSize.height} />}
-
-      {/* Grid size dropdown */}
+      {/* Grid size selector */}
       <div className="mb-3">
         <label className="mr-2 font-semibold text-sm md:text-base">
           Grid Size:
@@ -136,13 +164,11 @@ function Puzzle() {
       <button
         onClick={resetPuzzle}
         className="px-4 py-2 mt-6 mb-10 bg-blue-800 text-white rounded-lg hover:bg-green-600 text-sm md:text-base"
-
       >
         🔁 Shuffle Again
       </button>
-             {/* <button className="btn btn-soft p-5 btn-success">Success</button> */}
+
       <ToastContainer />
-      
     </div>
   );
 }
