@@ -7,6 +7,7 @@ function Puzzle() {
   const [size, setSize] = useState(3);
   const [tiles, setTiles] = useState([]);
   const [isWin, setIsWin] = useState(false);
+    const [showImage, setShowImage] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -86,7 +87,7 @@ function Puzzle() {
       const solved = newTiles.every((v, i) => v === i);
       if (solved && !isWin) {
         setIsWin(true);
-        toast.success("🎉 You solved the puzzle!", {
+        toast.success("🎉 Congratulation, You solved the puzzle!", {
           position: "top-center",
           autoClose: 2500,
         });
@@ -167,6 +168,23 @@ function Puzzle() {
       >
         🔁 Shuffle Again
       </button>
+         <button
+          onClick={() => setShowImage(!showImage)}
+          className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-pink-600 text-sm md:text-base transition"
+        >
+          {showImage ? "🙈 Hide Full Image" : "👀 Show Full Image"}
+        </button>
+         {showImage && (
+          <img
+            src={image}
+            alt="Full puzzle"
+            className="rounded-xl shadow-lg border mt-2 transition-all duration-500 hover:scale-105"
+            style={{
+              width: Math.min(window.innerWidth * 0.9, 300),
+              marginBottom: "10px",
+            }}
+          />
+        )}
 
       <ToastContainer />
     </div>
