@@ -100,9 +100,53 @@ function Puzzle() {
 
   return (
     <div className="flex flex-col items-center mt-2 px-2 select-none">
-      {isWin && (
+      {/* {isWin && (
         <Confetti width={windowSize.width} height={windowSize.height} />
-      )}
+      )} */}
+
+      {isWin && (
+  <Confetti
+    width={window.innerWidth}
+    height={window.innerHeight}
+    style={{
+      position: "fixed",   // পুরো স্ক্রিন জুড়ে
+      top: 0,
+      left: 0,
+      zIndex: 9999,        // সব element এর উপরে
+      pointerEvents: "none", // button/ puzzle click block করবে না
+    }}
+    numberOfPieces={500}   // বেশি pieces চাইলে বাড়াও
+    gravity={0.3}          // ধীরে পড়বে
+    recycle={true}        // একবার burst হয়ে শেষ হবে
+  />
+)}
+{/* 
+  {isWin && (
+  <div
+    style={{
+      position: "relative",
+      width: containerSize,
+      height: containerSize,
+      marginBottom: "-"+containerSize+"px", // নিচের layout ঠিক রাখতে
+      zIndex: 10,
+    }}
+  >
+    <Confetti
+      width={containerSize}
+      height={containerSize}
+      numberOfPieces={250}
+      gravity={0.4}
+      recycle={false}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        pointerEvents: "none",
+      }}
+    />
+  </div>
+)} */}
+
 
       {/* Grid size selector */}
       <div className="mb-3">
